@@ -95,3 +95,34 @@ while running:
     draw.circle(window, (0, 255, 0), (500, 500), int(my_player[2] * scale))
 
     to_remove = []
+    for eat in eats:
+        if eat.check_collision(my_player[0], my_player[1], my_player[2]):
+            to_remove.append(eat)
+            my_player[2] += int(eat.radius * 0.2)
+        else:
+            sx = int((eat.x - my_player[0]) * scale + 500)
+            sy = int((eat.y - my_player[1]) * scale + 500)
+            draw.circle(window, eat.color, (sx, sy), int(eat.radius * scale))
+
+    for eat in to_remove:
+        eats.remove(eat)
+    if lose:
+        t = f.render('U lose!', 1, (244, 0, 0))
+        window.blit(t, (400, 500))
+    display.update()
+    clock.tick(60)
+
+    if not lose:
+        keys = key.get_pressed()
+        if keys[K_w]: my_player[1] -= 15
+        if keys[K_s]: my_player[1] += 15
+        if keys[K_a]: my_player[0] -= 15
+        if keys[K_d]: my_player[0] += 15
+
+        try:
+            msg = f"{my_id},{my_player[0]},{my_player[1]},{my_player[2]},{name}"
+            sock.send(msg.encode())
+        except:
+            pass
+quit()
+
